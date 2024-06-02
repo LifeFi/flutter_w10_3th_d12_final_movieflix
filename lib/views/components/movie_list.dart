@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_model.dart';
+import 'package:flutter_w10_3th_d12_final_movieflix/view_models/movie_detail_view_model.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/views/components/interactive_container.dart';
 import 'package:go_router/go_router.dart';
 
 enum MovieListType { large, medium }
 
-class MovieList extends StatelessWidget {
+class MovieList extends ConsumerWidget {
   final MovieListType type;
   final String title;
   final List<MovieModel> movies;
@@ -17,12 +19,16 @@ class MovieList extends StatelessWidget {
     required this.movies,
   });
 
-  void _goToMovie(String movieId, BuildContext context) {
-    context.go("/movies/$movieId");
+  void _goToMovie(String movieId, BuildContext context, WidgetRef ref) async {
+    // Hero 애니메이션을 위해, Detail 이미지를 미리 로드.
+    await ref.read(movieDetailProvider(int.parse(movieId)).future);
+    if (context.mounted) {
+      context.go("/movies/$movieId?category=$title");
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -45,22 +51,25 @@ class MovieList extends StatelessWidget {
                 bottomValue: 0.95,
                 topValue: 1.05,
                 child: GestureDetector(
-                  onTap: () => _goToMovie(movie.id.toString(), context),
+                  onTap: () => _goToMovie(movie.id.toString(), context, ref),
                   child: SizedBox(
                     width: type == MovieListType.large ? 340 : 165,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Image.network(
-                            movie.thumb,
-                            width: double.maxFinite,
-                            height: type == MovieListType.large ? 250 : 180,
-                            fit: BoxFit.cover,
+                        Hero(
+                          tag: "${movie.id}_$title",
+                          child: Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Image.network(
+                              movie.thumb,
+                              width: double.maxFinite,
+                              height: type == MovieListType.large ? 250 : 180,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         if (type != MovieListType.large) ...[

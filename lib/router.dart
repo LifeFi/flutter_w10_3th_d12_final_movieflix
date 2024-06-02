@@ -13,7 +13,9 @@ final router = GoRouter(
           path: "movies/:movieId",
           builder: (context, state) {
             final movieId = int.parse(state.pathParameters["movieId"]!);
-            return MovieDetailScreen(movieId: movieId);
+            final category = state.uri.queryParameters["category"];
+
+            return MovieDetailScreen(movieId: movieId, category: category);
           },
         ),
       ],

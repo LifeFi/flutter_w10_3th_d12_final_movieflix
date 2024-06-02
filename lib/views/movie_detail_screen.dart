@@ -9,10 +9,12 @@ import 'package:go_router/go_router.dart';
 
 class MovieDetailScreen extends ConsumerStatefulWidget {
   final int movieId;
+  final String? category;
 
   const MovieDetailScreen({
     super.key,
     required this.movieId,
+    this.category,
   });
 
   @override
@@ -25,6 +27,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -36,22 +39,24 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                   child: Text('Failed to load data'),
                 ),
                 data: (movie) {
+                  print("${movie.id}_${widget.category}");
                   return Stack(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: NetworkImage(movie.thumb),
-                              fit: BoxFit.cover),
+                      Hero(
+                        tag: "${movie.id}_${widget.category}",
+                        child: Image.network(
+                          movie.thumb,
+                          height: size.height,
+                          fit: BoxFit.cover,
                         ),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                            sigmaX: 1,
-                            sigmaY: 1,
-                          ),
-                          child: Container(
-                            color: Colors.black.withOpacity(0.5),
-                          ),
+                      ),
+                      BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 1,
+                          sigmaY: 1,
+                        ),
+                        child: Container(
+                          color: Colors.black.withOpacity(0.5),
                         ),
                       ),
                       Padding(
