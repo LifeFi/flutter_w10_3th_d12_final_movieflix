@@ -39,8 +39,6 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                   return Stack(
                     children: [
                       Container(
-                        // height: MediaQuery.of(context).size.height,
-                        // width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: NetworkImage(movie.thumb),
@@ -179,6 +177,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
+                                color: Colors.black,
                               ),
                             ),
                           ),

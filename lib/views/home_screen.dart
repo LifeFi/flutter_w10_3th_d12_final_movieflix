@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/view_models/movies_view_model.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/views/components/movie_list.dart';
+import 'package:flutter_w10_3th_d12_final_movieflix/views/components/theme_switcher.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -18,7 +19,16 @@ class HomeScreen extends ConsumerWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 60),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: ThemeSwitcher(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
                 movies.when(
                   loading: () => const Center(
                     child: CircularProgressIndicator(),
