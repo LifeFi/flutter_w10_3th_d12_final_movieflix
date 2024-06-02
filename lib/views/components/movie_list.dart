@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_model.dart';
-import 'package:flutter_w10_3th_d12_final_movieflix/services/movie_api_service.dart';
 import 'package:go_router/go_router.dart';
 
 enum MovieListType { large, medium }
@@ -54,7 +53,7 @@ class MovieList extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Image.network(
-                          "${ApiService.imageBaseUrl}/${movie.thumb}",
+                          movie.thumb,
                           width: double.maxFinite,
                           height: type == MovieListType.large ? 250 : 180,
                           fit: BoxFit.cover,

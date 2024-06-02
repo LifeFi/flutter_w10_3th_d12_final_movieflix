@@ -1,37 +1,26 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_detail_model.dart';
-import 'package:flutter_w10_3th_d12_final_movieflix/services/movie_api_service.dart';
+import 'package:flutter_w10_3th_d12_final_movieflix/utils.dart';
+import 'package:flutter_w10_3th_d12_final_movieflix/view_models/movie_detail_view_model.dart';
 import 'package:go_router/go_router.dart';
 
-class MovieDetailScreen extends StatefulWidget {
+class MovieDetailScreen extends ConsumerStatefulWidget {
   final int movieId;
+
   const MovieDetailScreen({
     super.key,
     required this.movieId,
   });
 
   @override
-  State<MovieDetailScreen> createState() => _MovieDetailScreenState();
+  ConsumerState<MovieDetailScreen> createState() => _MovieDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen> {
+class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
   late final Future<MovieDetailModel> movieDetail;
-
-  @override
-  void initState() {
-    super.initState();
-    movieDetail = ApiService.getMovieDetail(widget.movieId);
-  }
-
-  String _formatRuntime(int runtime) {
-    final hours = (runtime / 60).floor();
-    final minutes = (runtime % 60);
-    String result;
-    hours > 0 ? result = "${hours}h ${minutes}min" : result = "${minutes}min";
-    return result;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +28,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          FutureBuilder(
-            future: movieDetail,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData) {
-                  final movie = snapshot.data!;
+          ref.watch(movieDetailProvider(widget.movieId)).when(
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                error: (error, stack) => const Center(
+                  child: Text('Failed to load data'),
+                ),
+                data: (movie) {
                   return Stack(
                     children: [
                       Container(
@@ -52,8 +43,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         // width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://image.tmdb.org/t/p/w500/${movie.thumb}"),
+                              image: NetworkImage(movie.thumb),
                               fit: BoxFit.cover),
                         ),
                         child: BackdropFilter(
@@ -74,7 +64,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height: size.height * 0.4,
+                                  height: size.height * 0.35,
                                 ),
                                 Text(
                                   movie.title,
@@ -108,7 +98,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        "${_formatRuntime(movie.runtime)} | ",
+                                        "${formatRuntime(movie.runtime)} | ",
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.white,
@@ -164,7 +154,18 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           height: 100,
                           width: double.maxFinite,
                           alignment: Alignment.center,
-                          color: Colors.black.withOpacity(0.7),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: AlignmentDirectional.bottomCenter,
+                              end: AlignmentDirectional.topCenter,
+                              colors: [
+                                Colors.black.withOpacity(1),
+                                Colors.black.withOpacity(0.9),
+                                Colors.black.withOpacity(0.8),
+                                Colors.black.withOpacity(0.3),
+                              ],
+                            ),
+                          ),
                           child: Container(
                             height: 60,
                             width: size.width * 0.7,
@@ -185,17 +186,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ),
                     ],
                   );
-                } else {
-                  return const Center(
-                    child: Text('Failed to load data'),
-                  );
-                }
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+                },
+              ),
           if (context.canPop())
             Positioned(
               top: 75,

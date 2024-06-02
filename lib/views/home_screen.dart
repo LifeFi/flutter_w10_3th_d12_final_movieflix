@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_model.dart';
-import 'package:flutter_w10_3th_d12_final_movieflix/services/movie_api_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_w10_3th_d12_final_movieflix/view_models/movies_view_model.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/views/components/movie_list.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-
-  final Future<List<MovieModel>> popularMovies = ApiService.getPopularMovies();
-  final Future<List<MovieModel>> nowPlayingMovies =
-      ApiService.getNowPlayingMovies();
-  final Future<List<MovieModel>> comingSoonMovies =
-      ApiService.getComingSoonMovies();
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final movies = ref.watch(moviesProvider);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -24,72 +19,40 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 60),
-                FutureBuilder(
-                  future: popularMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        print(snapshot.data?.first.id);
-                        return MovieList(
+                movies.when(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  error: (error, stack) => const Center(
+                    child: Text('Failed to load data'),
+                  ),
+                  data: (moviesByListCategory) {
+                    return Column(
+                      children: [
+                        MovieList(
                           type: MovieListType.large,
                           title: 'Popular Movies',
-                          movies: snapshot.data!,
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('Failed to load data'),
-                        );
-                      }
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                FutureBuilder(
-                  future: nowPlayingMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        return MovieList(
+                          movies:
+                              moviesByListCategory[MovieListCategory.popular]!,
+                        ),
+                        const SizedBox(height: 20),
+                        MovieList(
                           type: MovieListType.medium,
                           title: 'Now in Cinemas',
-                          movies: snapshot.data!,
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('Failed to load data'),
-                        );
-                      }
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                FutureBuilder(
-                  future: comingSoonMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        return MovieList(
+                          movies: moviesByListCategory[
+                              MovieListCategory.nowPlaying]!,
+                        ),
+                        const SizedBox(height: 20),
+                        MovieList(
                           type: MovieListType.medium,
                           title: 'Coming Soon',
-                          movies: snapshot.data!,
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('Failed to load data'),
-                        );
-                      }
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                          movies: moviesByListCategory[
+                              MovieListCategory.comingSoon]!,
+                        ),
+                      ],
                     );
                   },
-                ),
+                )
               ],
             ),
           ),

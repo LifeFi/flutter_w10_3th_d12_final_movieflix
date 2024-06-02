@@ -7,7 +7,7 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: "/",
-      builder: (context, state) => HomeScreen(),
+      builder: (context, state) => const HomeScreen(),
       routes: [
         GoRoute(
           path: "movies/:movieId",
