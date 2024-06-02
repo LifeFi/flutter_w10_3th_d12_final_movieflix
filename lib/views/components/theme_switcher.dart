@@ -33,11 +33,23 @@ class _ThemeSwitcherState extends ConsumerState<ThemeSwitcher> {
           child: Container(
             child: themeMode == ThemeMode.system
                 ? systemBrightness == Brightness.dark
-                    ? const Icon(Icons.dark_mode_outlined)
-                    : const Icon(Icons.light_mode_outlined)
+                    ? const Icon(
+                        Icons.dark_mode_outlined,
+                        size: 24,
+                      )
+                    : const Icon(
+                        Icons.light_mode_outlined,
+                        size: 24,
+                      )
                 : themeMode == ThemeMode.dark
-                    ? const Icon(Icons.dark_mode)
-                    : const Icon(Icons.light_mode),
+                    ? const Icon(
+                        Icons.dark_mode,
+                        size: 24,
+                      )
+                    : const Icon(
+                        Icons.light_mode,
+                        size: 24,
+                      ),
           ),
         ),
         Positioned(
