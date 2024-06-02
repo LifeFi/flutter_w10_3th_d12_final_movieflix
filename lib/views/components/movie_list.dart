@@ -20,7 +20,7 @@ class MovieList extends ConsumerWidget {
   });
 
   void _goToMovie(String movieId, BuildContext context, WidgetRef ref) async {
-    // Hero 애니메이션을 위해, Detail 이미지를 미리 로드.
+    // Hero 애니메이션을 위해, Detail 정보를 미리 로드.
     await ref.read(movieDetailProvider(int.parse(movieId)).future);
     if (context.mounted) {
       context.go("/movies/$movieId?category=$title");

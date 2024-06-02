@@ -23,8 +23,7 @@ class _ThemeSwitcherState extends ConsumerState<ThemeSwitcher> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeConfigProvider);
     final systemBrightness = MediaQuery.of(context).platformBrightness;
-
-    print(themeMode);
+    // print(themeMode);
     return Stack(
       clipBehavior: Clip.none,
       children: [

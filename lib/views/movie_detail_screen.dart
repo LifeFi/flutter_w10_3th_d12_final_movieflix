@@ -39,7 +39,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                   child: Text('Failed to load data'),
                 ),
                 data: (movie) {
-                  print("${movie.id}_${widget.category}");
+                  // print("${movie.id}_${widget.category}");
                   return Stack(
                     children: [
                       Hero(
@@ -47,6 +47,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                         child: Image.network(
                           movie.thumb,
                           height: size.height,
+                          width: size.width,
                           fit: BoxFit.cover,
                         ),
                       ),
