@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_model.dart';
-import 'package:flutter_w10_3th_d12_final_movieflix/view_models/movie_detail_view_model.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/views/components/interactive_container.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,12 +18,11 @@ class MovieList extends ConsumerWidget {
     required this.movies,
   });
 
-  void _goToMovie(String movieId, BuildContext context, WidgetRef ref) async {
-    // Hero 애니메이션을 위해, Detail 정보를 미리 로드.
-    await ref.read(movieDetailProvider(int.parse(movieId)).future);
-    if (context.mounted) {
-      context.go("/movies/$movieId?category=$title");
-    }
+  void _goToMovie(MovieModel movie, BuildContext context) async {
+    context.go(
+      "/movies/${movie.id}?category=$title",
+      extra: movie,
+    );
   }
 
   @override
@@ -51,7 +49,7 @@ class MovieList extends ConsumerWidget {
                 bottomValue: 0.95,
                 topValue: 1.05,
                 child: GestureDetector(
-                  onTap: () => _goToMovie(movie.id.toString(), context, ref),
+                  onTap: () => _goToMovie(movie, context),
                   child: SizedBox(
                     width: type == MovieListType.large ? 340 : 165,
                     child: Column(

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_detail_model.dart';
+import 'package:flutter_w10_3th_d12_final_movieflix/models/movie_model.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/utils.dart';
 import 'package:flutter_w10_3th_d12_final_movieflix/view_models/movie_detail_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -10,11 +11,13 @@ import 'package:go_router/go_router.dart';
 class MovieDetailScreen extends ConsumerStatefulWidget {
   final int movieId;
   final String? category;
+  final MovieModel? movie;
 
   const MovieDetailScreen({
     super.key,
     required this.movieId,
     this.category,
+    this.movie,
   });
 
   @override
@@ -32,8 +35,18 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
       body: Stack(
         children: [
           ref.watch(movieDetailProvider(widget.movieId)).when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(),
+                loading: () => Center(
+                  child: widget.movie != null
+                      ? Hero(
+                          tag: "${widget.movieId}_${widget.category}",
+                          child: Image.network(
+                            widget.movie!.thumb,
+                            height: size.height,
+                            width: size.width,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : const CircularProgressIndicator(),
                 ),
                 error: (error, stack) => const Center(
                   child: Text('Failed to load data'),
