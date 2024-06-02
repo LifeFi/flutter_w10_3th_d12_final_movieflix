@@ -3,6 +3,7 @@ import 'package:flutter_w10_3th_d12_final_movieflix/router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
+  // shared_preference 설정
   runApp(
     const ProviderScope(
       child: MyApp(),
